@@ -1,4 +1,4 @@
-python solve_turbo_chat.py \
+python solve_turbo_chatcot.py \
 	--result_path result/turbo-chatcot-5shot.json \
 	--write_mode w \
 	--dataset_name hotpot_qa \

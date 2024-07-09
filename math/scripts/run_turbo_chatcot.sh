@@ -1,5 +1,5 @@
-DATA_SPLIT=algebra
-RESULT_FOLDER=result/math_algebra
+DATA_SPLIT=intermediate_algebra
+RESULT_FOLDER=result/math_ia
 NUMBER_PER_PROCESS=100
 
 date
@@ -18,7 +18,7 @@ for ((i=1;i<=12;i++)) do
 		--num_retri 2 \
 		--demo_path demo/math.json \
 		--data_split $DATA_SPLIT \
-		--api_key_idx $i
+		--api_key_idx 1
 }&
 done
 

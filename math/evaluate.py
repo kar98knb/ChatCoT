@@ -239,7 +239,6 @@ def extract_answer(Answer_Texts, label):
 def main(args):
     with open(args.result_path, 'r') as fin:
         datas = load_multi_line_json(fin)
-    
     num_correct = 0
     total_problem = 0
     for data in tqdm(datas):
@@ -249,7 +248,6 @@ def main(args):
         except:
             pass
         total_problem = total_problem + 1
-
     print('Accuracy: {} ( {} / {} )'.format(round(num_correct / total_problem * 100, 2), num_correct, total_problem))
 
 if __name__ == '__main__':

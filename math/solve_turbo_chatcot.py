@@ -2,6 +2,7 @@ import re
 import os
 import sys
 import math
+# from openai import OpenAI
 import openai
 import json
 import time
@@ -24,13 +25,18 @@ from data_process import (
 # api_key_list for multiprocess
 api_key_list = [
     '',
-    YOUR_API_KEY_1,
-    YOUR_API_KEY_2,
-    YOUR_API_KEY_3,
-    YOUR_API_KEY_4,
-    YOUR_API_KEY_5,
-    YOUR_API_KEY_6,
+    # 'sk-pmndHSjdsSiBdKJ57c9f9aC5A93644189e689f2519B4C3B1',
+    'llama',
+    # YOUR_API_KEY_3,
+    # YOUR_API_KEY_4,
+    # YOUR_API_KEY_5,
+    # YOUR_API_KEY_6,
 ]
+
+# client = OpenAI(
+#     base_url = 'http://172.23.112.1:11434/v1',
+#     api_key='ollama', # required, but unused
+#     )
 
 DATA_PROCESSER = {
     'math': DataProcessForMATH,
@@ -301,8 +307,18 @@ def call_chat_completion(messages, num_retri, stop_word='Problem: '):
     len_prompt = [len(prompt_1_chat), len(prompt_2_chat), len(prompt_3_chat), len(prompt_4_chat), len(prompt_5_chat)]
     while (True):
         try:
+            # res = client.chat.completions.create(
+            #     model="llama3",
+            #     messages=messages,
+            #     temperature=0,
+            #     max_tokens=512,
+            #     top_p=1,
+            #     frequency_penalty=0,
+            #     presence_penalty=0,
+            #     stop=stop_word
+            # )
             res = openai.ChatCompletion.create(
-                model='gpt-3.5-turbo',
+                model='llama3',
                 messages=messages,
                 temperature=0,
                 max_tokens=512,
@@ -332,10 +348,10 @@ def call_chat_completion(messages, num_retri, stop_word='Problem: '):
                 
         except openai.error.RateLimitError as e:
             time.sleep(20)
-        except:
-            time.sleep(10)
+        # except:
+        #     time.sleep(10)
 
-    choice = res['choices'][0]
+    choice = res["choices"][0]
     steps = choice['message']['content'].strip()
     if "Problem: " in steps:
         steps = steps.split('Problem: ')[0].strip()
@@ -631,8 +647,11 @@ def chat_and_reasoning(data, num_retri, max_hop=8):
 
 
 def main(args):
-    openai.api_key = api_key_list[args.api_key_idx]
-
+    
+    # openai.api_key = api_key_list[args.api_key_idx]
+    # # openai.api_base = "https://apikeyplus.com/v1"
+    openai.api_base = "http://172.23.112.1:11434/v1"
+    openai.api_key = "hahaha"
     fout = open(args.result_path, args.write_mode)
     data_processer = DATA_PROCESSER[args.dataset_name](args.demo_path, args.num_examplar)
     
@@ -647,7 +666,6 @@ def main(args):
                 dataset[key] = []
             dataset[key].append(data[key])
     dataset = Dataset.from_dict(dataset)
-    print(dataset)
 
     num_correct = 0
     total_problem = 0

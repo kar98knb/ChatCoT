@@ -22,7 +22,8 @@ from data_process import DataProcessForHotpotQA
 from chat_retrieval import get_similar_content
 
 
-openai.api_key = YOUR_API_KEY
+openai.api_key = "hahaha"
+openai.api_base = "http://172.23.112.1:11434/v1"
 
 DATA_PROCESSER = {
     'hotpot_qa': DataProcessForHotpotQA,
@@ -57,7 +58,7 @@ def call_chat_completion(messages, stop_word='Problem: '):
     while (True):
         try:
             res = openai.ChatCompletion.create(
-                model='gpt-3.5-turbo',
+                model='llama3',
                 messages=messages,
                 temperature=0,
                 max_tokens=128,

@@ -1,95 +1,50 @@
-# ChatCoT: Tool-Augmented Chain-of-Thought Reasoning on Chat-based Large Language Models
+# COMP7404 Group 8 Demo
 
-This repo provides the source code & data of our paper: [ChatCoT: Tool-Augmented Chain-of-Thought Reasoning on Chat-based Large Language Models](https://arxiv.org/abs/2305.14323) (Arxiv 2023).
+## Discliamer
+This repo is forked from [ChatCoT: Tool-Augmented Chain-of-Thought Reasoning on Chat-based Large Language Models](https://github.com/RUCAIBox/ChatCoT). We only used and modified this code for testing the results with LLaMA3-8B (details shown later) on MATH dataset. For hotpot dataset, we don't have enough computational resources and time to finish the whole test, but the code is runnable.
 
-![](./picture/framework.png)
+## Environment
 
-```
-@InProceedings{Chen-ChatCot-2023,
-      title = {ChatCoT: Tool-Augmented Chain-of-Thought Reasoning on Chat-based Large Language Models}, 
-      author = {Zhipeng Chen and Kun Zhou and Beichen Zhang and Zheng Gong and Wayne Xin Zhao and Ji-Rong Wen},
-      year = {2023},
-      eprint = {2305.14323},
-      archivePrefix = {arXiv},
-      primaryClass = {cs.CL}
-}
-```
+### Code
+Prepare a Linux environment (for Windows, Ubuntu for WSL can work).
 
-## Data & Code
-
-+ `math/`: the code about ChatCoT on MATH dataset
-    + `demo/`: the demos used in in-context learning on few-shot setting
-    + `math/result/`: the result files of different methods
-    + `math/scripts/`: the running scripts of different methods
-    + `math/ablation`: the code of ablation study
-    + `math/self_consistency`: the code to explore combining ChatCoT with CoT improvement strategies
-
-The `hotpotqa/` folder is similar with `math/` folder
-
-## Usage
-
-### Prepare
-
-You can use following scripts to install related python package through pip:
-```
-git clone https://github.com/RUCAIBox/ChatCoT.git
-cd ChatCoT
-pip install -r requirements.txt
+We test this code on Python 3.9 (At first we tried Python 3.12 but it didn't work).
+```sh
+conda create -n [your environment name] python=3.9
+conda activete [your environment name]
+pip install -r requirement.txt
 ```
 
-### Inference
+### Ollama
+We don't want to modify the code too much so we use Ollama. Please visit [Ollama website](https://ollama.com/) to download and install Ollama for you.
 
-You can run ChatCot on the sub-task of MATH dataset by running `run_turbo_chatcot.sh`:
+Once you have installed Ollama, for Windows user:
+
+```sh
+ollama serve
+ollama pull llama3
+ollama run llama3
 ```
+
+Note that if you are using WSL and have deployed ollama on your Windows, You need to modify the ollama listening ip from localhost to 0.0.0.0 .
+
+### Get back to code
+
+Now we only need to change a little bit for LLaMA.
+
+For MATH dataset:
+
+Go to ./math/solve_turbo_chatcot.py line 653 and change this to your ollama's ip and port.
+```python
+openai.api_base = "http://172.23.112.1:11434/v1"
+```
+To test results on a certain subset of MATH:
+```sh
 cd math
-bash scripts/run_turbo_chatcot.sh
+bash ./scripts/run_turbo_chatcot.sh
 ```
-
-You have to replace `YOUR_API_KEY ` with you openai api key in the code. Specially, we run ChatCoT through multi-processing, and you should prepare a list of api key in order to run the code correctly.
-
-### Evaluate
-
-You can evaluate the results by running `eval.sh`:
+Now to find out which subset is being tested, go to ./scripts/run_turbo_chatcot.sh and change these two lines
+```sh
+DATA_SPLIT=intermediate_algebra # See "knowledge_point" in ./dataset/math/test_retrieval-all.json for all subsets.
+RESULT_FOLDER=result/math_ia # change this too
 ```
-cd math
-bash scripts/eval.sh
-```
-
-## Results
-
-### Main Results
-
-| Methods      | Algebra   | CP    | PC    | PA    | Geometry  | IA    | NT    |
-| :-----:      | :-:       | :-:   | :-:   |:-:    | :-:       | :-:   |:-:    |
-| CoT          | 48.10     | 31.43 | 21.06 | 56.60 | 22.34     | 18.27 | 29.07 |
-| CoT w/ Tool  | 35.89     | 22.57 |  9.34 | 40.53 | 13.57     |  9.41 | 19.44 |
-| CoT w/ Retri | <u>52.74</u> | <u>32.70</u> | <u>18.86</u> | <u>58.44</u> | <u>29.23</u> | **19.93** | <u>31.67</u> |
-| ChatCoT      | 56.11     | **34.18** | **23.81** | **59.24** | **29.85** | <u>19.49</u> | **32.59** |
-
-| Methods               | HotpotQA     |
-| :-----:               | :-:          |
-| CoT                   | 37.99        |
-| CoT w/ Tool           | 31.42        |
-| ChatCoT w/o Feedback  | <u>53.79</u> |
-| ChatCoT               | **59.16**    |
-
-### Ablation Study
-
-| Methods | PC  | Geo | NT  |
-| :-----: | :-: | :-: | :-: |
-| ChatCoT | **23.81** | **29.85** | **32.59** |
-| ChatCoT w/o TK | 23.26 | 29.23 | 30.56 |
-| ChatCoT w/o RATK | 19.96 | 27.35 | 30.93 |
-| ChatCoT w/o MRF | 21.61 | 24.22 | 32.22 |
-
-The results of ablation study. TK, RATK, and MRF denote if using tool knowledge, retrieval-augmented task knowledge, and multi-turn reasoning format at early turns of the conversation, respectively.
-
-
-### Combining CoT Improvement Strategies
-
-| Methods | CP  | NT  |
-| :-----: | :-: | :-: |
-| CoT | 31.43 | 29.07 |
-| CoT + SC | 35.23 | 34.44 |
-| ChatCoT | 34.18 | 32.59 |
-| ChatCoT + SC | **40.08** | **38.33** |
