@@ -6,7 +6,7 @@ This repo is forked from [ChatCoT: Tool-Augmented Chain-of-Thought Reasoning on 
 ## Environment
 
 ### Code
-Prepare a Linux environment (for Windows, Ubuntu for WSL can work).
+Prepare a Linux environment (for Windows, Ubuntu for WSL can work). The reason for using Linux is that the shell is written in Unix style that is not supproted on powershell. But since it is very easy to be modified, Windows is also OK.
 
 We test this code on Python 3.9 (At first we tried Python 3.12 but it didn't work).
 ```sh
