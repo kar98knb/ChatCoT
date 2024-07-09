@@ -48,3 +48,6 @@ Now to find out which subset is being tested, go to ./scripts/run_turbo_chatcot.
 DATA_SPLIT=intermediate_algebra # See "knowledge_point" in ./dataset/math/test_retrieval-all.json for all subsets.
 RESULT_FOLDER=result/math_ia # change this too
 ```
+
+## Result
+![](./picture/result.png)
