@@ -5,7 +5,7 @@ RESULT_FOLDER=result/math_algebra
 python solve_turbo_chatcot.py \
 		--result_path $RESULT_FOLDER/chatcot/test.json \
 		--start_prob 1 \
-		--end_prob 2 \
+		--end_prob 10 \
 		--write_mode w \
 		--dataset_name math \
 		--num_examplar 5 \
